@@ -1,0 +1,16 @@
+\begin{tabularx}{\linewidth}{@{}l l X@{}}
+\toprule
+\# & Wrong & Utterance, then the disputed spans (G = gold, C = CRF, L = BiLSTM-CRF) \\
+\midrule
+D1 (176) & CRF & what meals are available on dl 468$^{\dagger}$ which al$^{\dagger}$ arrives in san francisco at \textbf{950}$^{\dagger}$ \textbf{am} \newline {\footnotesize G: \texttt{arrive\_time.time}=950 am \quad C: \texttt{depart\_time.time}=950 am \quad L: \texttt{arrive\_time.time}=950 am} \\
+D2 (368) & CRF & how many passengers can an \textbf{l1011}$^{\dagger}$ aircraft hold$^{\dagger}$ \newline {\footnotesize G: \texttt{aircraft\_code}=l1011 \quad C: -- \quad L: \texttt{aircraft\_code}=l1011} \\
+D3 (359) & CRF & what is \textbf{phl}$^{\dagger}$ \newline {\footnotesize G: \texttt{airport\_code}=phl \quad C: -- \quad L: \texttt{airport\_code}=phl} \\
+D4 (512) & CRF & what is \textbf{tpa}$^{\dagger}$ \newline {\footnotesize G: \texttt{airport\_code}=tpa \quad C: -- \quad L: \texttt{airport\_code}=tpa} \\
+D5 (204) & LSTM & what is the first class round trip airfare from \textbf{india}$^{\dagger}$ indianapolis to memphis \newline {\footnotesize G: -- \quad C: -- \quad L: \texttt{fromloc.city\_name}=india} \\
+D6 (773) & LSTM & how many people will a \textbf{757} hold$^{\dagger}$ \newline {\footnotesize G: \texttt{aircraft\_code}=757 \quad C: \texttt{aircraft\_code}=757 \quad L: --} \\
+D7 (164) & LSTM & how many canadian airlines international flights use aircraft \textbf{320}$^{\dagger}$ \newline {\footnotesize G: \texttt{aircraft\_code}=320 \quad C: \texttt{aircraft\_code}=320 \quad L: --} \\
+D8 (165) & LSTM & how many canadian airlines flights use aircraft \textbf{dh8}$^{\dagger}$ \newline {\footnotesize G: \texttt{aircraft\_code}=dh8 \quad C: \texttt{aircraft\_code}=dh8 \quad L: --} \\
+D9 (51) & both & what meals are served on american flight \textbf{665}$^{\dagger}$ \textbf{673}$^{\dagger}$ from milwaukee to seattle \newline {\footnotesize G: \texttt{flight\_number}=665 673 \quad C: \texttt{flight\_number}=665; \texttt{flight\_number}=673 \quad L: \texttt{flight\_number}=665; \texttt{flight\_number}=673} \\
+D10 (243) & both & what is the seating capacity for \textbf{delta} \textbf{be1}$^{\dagger}$ \newline {\footnotesize G: \texttt{aircraft\_code}=be1; \texttt{airline\_name}=delta \quad C: \texttt{airline\_name}=delta be1 \quad L: \texttt{airline\_name}=delta; \texttt{flight\_number}=be1} \\
+\bottomrule
+\end{tabularx}

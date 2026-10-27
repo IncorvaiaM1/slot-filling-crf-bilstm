@@ -1,0 +1,17 @@
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Span errors on test (2,837 gold spans) & CRF & BiLSTM-CRF \\
+\midrule
+wrong type & 142 & 102 \\
+wrong boundary & 12 & 11 \\
+type + boundary & 8 & 7 \\
+missed & 33 & 21 \\
+spurious & 6 & 10 \\
+\midrule
+recall, spans w/ OOV token (n=50) & 0.540 & 0.620 \\
+recall, in-vocab spans (n=2787) & 0.938 & 0.956 \\
+\midrule
+sentences wrong (this model only) & 53 & 29 \\
+sentences wrong for both & \multicolumn{2}{c}{87} \\
+\bottomrule
+\end{tabular}

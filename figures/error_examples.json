@@ -1,0 +1,585 @@
+{
+  "n_test": 893,
+  "exact_match_counts": {
+    "both_correct": 724,
+    "both_wrong": 87,
+    "crf_wrong_only": 53,
+    "bilstm_wrong_only": 29
+  },
+  "crf_metrics": {
+    "token_f1": 0.9329126080395116,
+    "span_f1": 0.9360496014171833
+  },
+  "bilstm_metrics": {
+    "token_f1": 0.949945295404814,
+    "span_f1": 0.9507502206531332
+  },
+  "examples": [
+    {
+      "index": 176,
+      "bucket": "crf_wrong_only",
+      "score": 14,
+      "tokens": [
+        "what",
+        "meals",
+        "are",
+        "available",
+        "on",
+        "dl",
+        "468",
+        "which",
+        "al",
+        "arrives",
+        "in",
+        "san",
+        "francisco",
+        "at",
+        "950",
+        "am"
+      ],
+      "gold": [
+        "O",
+        "B-meal",
+        "O",
+        "O",
+        "O",
+        "B-airline_code",
+        "B-flight_number",
+        "O",
+        "O",
+        "O",
+        "O",
+        "B-toloc.city_name",
+        "I-toloc.city_name",
+        "O",
+        "B-arrive_time.time",
+        "I-arrive_time.time"
+      ],
+      "crf": [
+        "O",
+        "B-meal",
+        "O",
+        "O",
+        "O",
+        "B-airline_code",
+        "B-flight_number",
+        "O",
+        "O",
+        "O",
+        "O",
+        "B-toloc.city_name",
+        "I-toloc.city_name",
+        "O",
+        "B-depart_time.time",
+        "I-depart_time.time"
+      ],
+      "bilstm": [
+        "O",
+        "B-meal",
+        "O",
+        "O",
+        "O",
+        "B-airline_code",
+        "B-flight_number",
+        "O",
+        "O",
+        "O",
+        "O",
+        "B-toloc.city_name",
+        "I-toloc.city_name",
+        "O",
+        "B-arrive_time.time",
+        "I-arrive_time.time"
+      ],
+      "oov_tokens": [
+        "468",
+        "al",
+        "950"
+      ],
+      "unseen_city_fillers": [],
+      "span_boundary_error": false,
+      "gold_spans": "meal[1:2]='meals'; airline_code[5:6]='dl'; flight_number[6:7]='468'; toloc.city_name[11:13]='san francisco'; arrive_time.time[14:16]='950 am'",
+      "crf_spans": "meal[1:2]='meals'; airline_code[5:6]='dl'; flight_number[6:7]='468'; toloc.city_name[11:13]='san francisco'; depart_time.time[14:16]='950 am'",
+      "bilstm_spans": "meal[1:2]='meals'; airline_code[5:6]='dl'; flight_number[6:7]='468'; toloc.city_name[11:13]='san francisco'; arrive_time.time[14:16]='950 am'"
+    },
+    {
+      "index": 368,
+      "bucket": "crf_wrong_only",
+      "score": 13,
+      "tokens": [
+        "how",
+        "many",
+        "passengers",
+        "can",
+        "an",
+        "l1011",
+        "aircraft",
+        "hold"
+      ],
+      "gold": [
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "B-aircraft_code",
+        "O",
+        "O"
+      ],
+      "crf": [
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O"
+      ],
+      "bilstm": [
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "B-aircraft_code",
+        "O",
+        "O"
+      ],
+      "oov_tokens": [
+        "l1011",
+        "hold"
+      ],
+      "unseen_city_fillers": [],
+      "span_boundary_error": false,
+      "gold_spans": "aircraft_code[5:6]='l1011'",
+      "crf_spans": "(none)",
+      "bilstm_spans": "aircraft_code[5:6]='l1011'"
+    },
+    {
+      "index": 359,
+      "bucket": "crf_wrong_only",
+      "score": 12,
+      "tokens": [
+        "what",
+        "is",
+        "phl"
+      ],
+      "gold": [
+        "O",
+        "O",
+        "B-airport_code"
+      ],
+      "crf": [
+        "O",
+        "O",
+        "O"
+      ],
+      "bilstm": [
+        "O",
+        "O",
+        "B-airport_code"
+      ],
+      "oov_tokens": [
+        "phl"
+      ],
+      "unseen_city_fillers": [],
+      "span_boundary_error": false,
+      "gold_spans": "airport_code[2:3]='phl'",
+      "crf_spans": "(none)",
+      "bilstm_spans": "airport_code[2:3]='phl'"
+    },
+    {
+      "index": 512,
+      "bucket": "crf_wrong_only",
+      "score": 12,
+      "tokens": [
+        "what",
+        "is",
+        "tpa"
+      ],
+      "gold": [
+        "O",
+        "O",
+        "B-airport_code"
+      ],
+      "crf": [
+        "O",
+        "O",
+        "O"
+      ],
+      "bilstm": [
+        "O",
+        "O",
+        "B-airport_code"
+      ],
+      "oov_tokens": [
+        "tpa"
+      ],
+      "unseen_city_fillers": [],
+      "span_boundary_error": false,
+      "gold_spans": "airport_code[2:3]='tpa'",
+      "crf_spans": "(none)",
+      "bilstm_spans": "airport_code[2:3]='tpa'"
+    },
+    {
+      "index": 204,
+      "bucket": "bilstm_wrong_only",
+      "score": 11,
+      "tokens": [
+        "what",
+        "is",
+        "the",
+        "first",
+        "class",
+        "round",
+        "trip",
+        "airfare",
+        "from",
+        "india",
+        "indianapolis",
+        "to",
+        "memphis"
+      ],
+      "gold": [
+        "O",
+        "O",
+        "O",
+        "B-class_type",
+        "I-class_type",
+        "B-round_trip",
+        "I-round_trip",
+        "O",
+        "O",
+        "O",
+        "B-fromloc.city_name",
+        "O",
+        "B-toloc.city_name"
+      ],
+      "crf": [
+        "O",
+        "O",
+        "O",
+        "B-class_type",
+        "I-class_type",
+        "B-round_trip",
+        "I-round_trip",
+        "O",
+        "O",
+        "O",
+        "B-fromloc.city_name",
+        "O",
+        "B-toloc.city_name"
+      ],
+      "bilstm": [
+        "O",
+        "O",
+        "O",
+        "B-class_type",
+        "I-class_type",
+        "B-round_trip",
+        "I-round_trip",
+        "O",
+        "O",
+        "B-fromloc.city_name",
+        "B-fromloc.city_name",
+        "O",
+        "B-toloc.city_name"
+      ],
+      "oov_tokens": [
+        "india"
+      ],
+      "unseen_city_fillers": [],
+      "span_boundary_error": true,
+      "gold_spans": "class_type[3:5]='first class'; round_trip[5:7]='round trip'; fromloc.city_name[10:11]='indianapolis'; toloc.city_name[12:13]='memphis'",
+      "crf_spans": "class_type[3:5]='first class'; round_trip[5:7]='round trip'; fromloc.city_name[10:11]='indianapolis'; toloc.city_name[12:13]='memphis'",
+      "bilstm_spans": "class_type[3:5]='first class'; round_trip[5:7]='round trip'; fromloc.city_name[9:10]='india'; fromloc.city_name[10:11]='indianapolis'; toloc.city_name[12:13]='memphis'"
+    },
+    {
+      "index": 773,
+      "bucket": "bilstm_wrong_only",
+      "score": 11,
+      "tokens": [
+        "how",
+        "many",
+        "people",
+        "will",
+        "a",
+        "757",
+        "hold"
+      ],
+      "gold": [
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "B-aircraft_code",
+        "O"
+      ],
+      "crf": [
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "B-aircraft_code",
+        "O"
+      ],
+      "bilstm": [
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O"
+      ],
+      "oov_tokens": [
+        "hold"
+      ],
+      "unseen_city_fillers": [],
+      "span_boundary_error": false,
+      "gold_spans": "aircraft_code[5:6]='757'",
+      "crf_spans": "aircraft_code[5:6]='757'",
+      "bilstm_spans": "(none)"
+    },
+    {
+      "index": 164,
+      "bucket": "bilstm_wrong_only",
+      "score": 10,
+      "tokens": [
+        "how",
+        "many",
+        "canadian",
+        "airlines",
+        "international",
+        "flights",
+        "use",
+        "aircraft",
+        "320"
+      ],
+      "gold": [
+        "O",
+        "O",
+        "B-airline_name",
+        "I-airline_name",
+        "I-airline_name",
+        "O",
+        "O",
+        "O",
+        "B-aircraft_code"
+      ],
+      "crf": [
+        "O",
+        "O",
+        "B-airline_name",
+        "I-airline_name",
+        "I-airline_name",
+        "O",
+        "O",
+        "O",
+        "B-aircraft_code"
+      ],
+      "bilstm": [
+        "O",
+        "O",
+        "B-airline_name",
+        "I-airline_name",
+        "I-airline_name",
+        "O",
+        "O",
+        "O",
+        "O"
+      ],
+      "oov_tokens": [
+        "320"
+      ],
+      "unseen_city_fillers": [],
+      "span_boundary_error": false,
+      "gold_spans": "airline_name[2:5]='canadian airlines international'; aircraft_code[8:9]='320'",
+      "crf_spans": "airline_name[2:5]='canadian airlines international'; aircraft_code[8:9]='320'",
+      "bilstm_spans": "airline_name[2:5]='canadian airlines international'"
+    },
+    {
+      "index": 165,
+      "bucket": "bilstm_wrong_only",
+      "score": 10,
+      "tokens": [
+        "how",
+        "many",
+        "canadian",
+        "airlines",
+        "flights",
+        "use",
+        "aircraft",
+        "dh8"
+      ],
+      "gold": [
+        "O",
+        "O",
+        "B-airline_name",
+        "I-airline_name",
+        "O",
+        "O",
+        "O",
+        "B-aircraft_code"
+      ],
+      "crf": [
+        "O",
+        "O",
+        "B-airline_name",
+        "I-airline_name",
+        "O",
+        "O",
+        "O",
+        "B-aircraft_code"
+      ],
+      "bilstm": [
+        "O",
+        "O",
+        "B-airline_name",
+        "I-airline_name",
+        "O",
+        "O",
+        "O",
+        "O"
+      ],
+      "oov_tokens": [
+        "dh8"
+      ],
+      "unseen_city_fillers": [],
+      "span_boundary_error": false,
+      "gold_spans": "airline_name[2:4]='canadian airlines'; aircraft_code[7:8]='dh8'",
+      "crf_spans": "airline_name[2:4]='canadian airlines'; aircraft_code[7:8]='dh8'",
+      "bilstm_spans": "airline_name[2:4]='canadian airlines'"
+    },
+    {
+      "index": 51,
+      "bucket": "both_wrong",
+      "score": 15,
+      "tokens": [
+        "what",
+        "meals",
+        "are",
+        "served",
+        "on",
+        "american",
+        "flight",
+        "665",
+        "673",
+        "from",
+        "milwaukee",
+        "to",
+        "seattle"
+      ],
+      "gold": [
+        "O",
+        "B-meal",
+        "O",
+        "O",
+        "O",
+        "B-airline_name",
+        "O",
+        "B-flight_number",
+        "I-flight_number",
+        "O",
+        "B-fromloc.city_name",
+        "O",
+        "B-toloc.city_name"
+      ],
+      "crf": [
+        "O",
+        "B-meal",
+        "O",
+        "O",
+        "O",
+        "B-airline_name",
+        "O",
+        "B-flight_number",
+        "B-flight_number",
+        "O",
+        "B-fromloc.city_name",
+        "O",
+        "B-toloc.city_name"
+      ],
+      "bilstm": [
+        "O",
+        "B-meal",
+        "O",
+        "O",
+        "O",
+        "B-airline_name",
+        "O",
+        "B-flight_number",
+        "B-flight_number",
+        "O",
+        "B-fromloc.city_name",
+        "O",
+        "B-toloc.city_name"
+      ],
+      "oov_tokens": [
+        "665",
+        "673"
+      ],
+      "unseen_city_fillers": [],
+      "span_boundary_error": true,
+      "gold_spans": "meal[1:2]='meals'; airline_name[5:6]='american'; flight_number[7:9]='665 673'; fromloc.city_name[10:11]='milwaukee'; toloc.city_name[12:13]='seattle'",
+      "crf_spans": "meal[1:2]='meals'; airline_name[5:6]='american'; flight_number[7:8]='665'; flight_number[8:9]='673'; fromloc.city_name[10:11]='milwaukee'; toloc.city_name[12:13]='seattle'",
+      "bilstm_spans": "meal[1:2]='meals'; airline_name[5:6]='american'; flight_number[7:8]='665'; flight_number[8:9]='673'; fromloc.city_name[10:11]='milwaukee'; toloc.city_name[12:13]='seattle'"
+    },
+    {
+      "index": 243,
+      "bucket": "both_wrong",
+      "score": 13,
+      "tokens": [
+        "what",
+        "is",
+        "the",
+        "seating",
+        "capacity",
+        "for",
+        "delta",
+        "be1"
+      ],
+      "gold": [
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "B-airline_name",
+        "B-aircraft_code"
+      ],
+      "crf": [
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "B-airline_name",
+        "I-airline_name"
+      ],
+      "bilstm": [
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "O",
+        "B-airline_name",
+        "B-flight_number"
+      ],
+      "oov_tokens": [
+        "be1"
+      ],
+      "unseen_city_fillers": [],
+      "span_boundary_error": true,
+      "gold_spans": "airline_name[6:7]='delta'; aircraft_code[7:8]='be1'",
+      "crf_spans": "airline_name[6:8]='delta be1'",
+      "bilstm_spans": "airline_name[6:7]='delta'; flight_number[7:8]='be1'"
+    }
+  ]
+}

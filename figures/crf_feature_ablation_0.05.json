@@ -1,0 +1,172 @@
+{
+  "identity": {
+    "groups": [
+      "identity"
+    ],
+    "n_state_features": 985,
+    "dev_span_f1": 0.6616130988477865,
+    "dev_token_f1": 0.6776655996060084,
+    "dev_wrong_type": 422,
+    "dev_role_only": 366,
+    "test_span_f1": 0.6549556213017751,
+    "test_token_f1": 0.6651454649172847,
+    "n_train": 224,
+    "seconds": 6.0
+  },
+  "+affix": {
+    "groups": [
+      "affix",
+      "identity"
+    ],
+    "n_state_features": 2515,
+    "dev_span_f1": 0.6780065652044167,
+    "dev_token_f1": 0.6866973588563121,
+    "dev_wrong_type": 430,
+    "dev_role_only": 372,
+    "test_span_f1": 0.6600505232767955,
+    "test_token_f1": 0.6634241245136187,
+    "n_train": 224,
+    "seconds": 8.4
+  },
+  "+ortho": {
+    "groups": [
+      "affix",
+      "identity",
+      "ortho"
+    ],
+    "n_state_features": 2825,
+    "dev_span_f1": 0.6748356246264196,
+    "dev_token_f1": 0.684645286686103,
+    "dev_wrong_type": 432,
+    "dev_role_only": 375,
+    "test_span_f1": 0.659790083242852,
+    "test_token_f1": 0.6629526462395543,
+    "n_train": 224,
+    "seconds": 9.6
+  },
+  "+ctx1": {
+    "groups": [
+      "affix",
+      "ctx1",
+      "identity",
+      "ortho"
+    ],
+    "n_state_features": 5487,
+    "dev_span_f1": 0.8319070904645476,
+    "dev_token_f1": 0.8411122144985105,
+    "dev_wrong_type": 152,
+    "dev_role_only": 102,
+    "test_span_f1": 0.8108008137599408,
+    "test_token_f1": 0.8221841052029731,
+    "n_train": 224,
+    "seconds": 14.4
+  },
+  "+ctx2": {
+    "groups": [
+      "affix",
+      "ctx1",
+      "ctx2",
+      "identity",
+      "ortho"
+    ],
+    "n_state_features": 5583,
+    "dev_span_f1": 0.8345102855388394,
+    "dev_token_f1": 0.8445220863488895,
+    "dev_wrong_type": 140,
+    "dev_role_only": 92,
+    "test_span_f1": 0.8201518799777736,
+    "test_token_f1": 0.8349514563106796,
+    "n_train": 224,
+    "seconds": 13.7
+  },
+  "full": {
+    "groups": [
+      "affix",
+      "ctx1",
+      "ctx2",
+      "gaz",
+      "identity",
+      "ortho"
+    ],
+    "n_state_features": 5072,
+    "dev_span_f1": 0.8532110091743119,
+    "dev_token_f1": 0.8640318170519513,
+    "dev_wrong_type": 129,
+    "dev_role_only": 97,
+    "test_span_f1": 0.8469425119004028,
+    "test_token_f1": 0.8558533145275036,
+    "n_train": 224,
+    "seconds": 21.5
+  },
+  "full-gaz": {
+    "groups": [
+      "affix",
+      "ctx1",
+      "ctx2",
+      "identity",
+      "ortho"
+    ],
+    "n_state_features": 5583,
+    "dev_span_f1": 0.8345102855388394,
+    "dev_token_f1": 0.8445220863488895,
+    "dev_wrong_type": 140,
+    "dev_role_only": 92,
+    "test_span_f1": 0.8201518799777736,
+    "test_token_f1": 0.8349514563106796,
+    "n_train": 224,
+    "seconds": 13.7
+  },
+  "full-affix": {
+    "groups": [
+      "ctx1",
+      "ctx2",
+      "gaz",
+      "identity",
+      "ortho"
+    ],
+    "n_state_features": 3138,
+    "dev_span_f1": 0.8339981589444615,
+    "dev_token_f1": 0.8452113028257064,
+    "dev_wrong_type": 144,
+    "dev_role_only": 108,
+    "test_span_f1": 0.8289546206136321,
+    "test_token_f1": 0.8414478353442157,
+    "n_train": 224,
+    "seconds": 18.5
+  },
+  "full-ortho": {
+    "groups": [
+      "affix",
+      "ctx1",
+      "ctx2",
+      "gaz",
+      "identity"
+    ],
+    "n_state_features": 4762,
+    "dev_span_f1": 0.8513513513513514,
+    "dev_token_f1": 0.8608543592305771,
+    "dev_wrong_type": 122,
+    "dev_role_only": 94,
+    "test_span_f1": 0.8432452276064611,
+    "test_token_f1": 0.85527809307605,
+    "n_train": 224,
+    "seconds": 11.6
+  },
+  "full-ctx": {
+    "groups": [
+      "affix",
+      "gaz",
+      "identity",
+      "ortho"
+    ],
+    "n_state_features": 2571,
+    "dev_span_f1": 0.6964339226850466,
+    "dev_token_f1": 0.7055095075572891,
+    "dev_wrong_type": 408,
+    "dev_role_only": 367,
+    "test_span_f1": 0.6898424769147202,
+    "test_token_f1": 0.6925013989927252,
+    "n_train": 224,
+    "seconds": 12.5
+  }
+}

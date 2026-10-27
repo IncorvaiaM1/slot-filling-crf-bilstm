@@ -1,0 +1,12 @@
+\begin{tabular}{@{}rr ccc c@{}}
+\toprule
+ & & \multicolumn{3}{c}{Test span F1} & Dev span F1 \\
+\cmidrule(lr){3-5}\cmidrule(l){6-6}
+Frac. & Sent. & CRF & BiLSTM-CRF & BiLSTM+softmax & CRF / BiLSTM-CRF \\
+\midrule
+5\% & 224 & \textbf{0.847} & 0.819\,{\scriptsize$\pm$0.009} & 0.801\,{\scriptsize$\pm$0.010} & 0.853 / 0.848 \\
+10\% & 448 & \textbf{0.887} & 0.882\,{\scriptsize$\pm$0.002} & 0.865\,{\scriptsize$\pm$0.005} & 0.891 / 0.899 \\
+25\% & 1,120 & 0.905 & \textbf{0.920}\,{\scriptsize$\pm$0.003} & 0.917\,{\scriptsize$\pm$0.001} & 0.925 / 0.949 \\
+100\% & 4,478 & 0.936 & \textbf{0.952} & 0.949\,{\scriptsize$\pm$0.001} & 0.954 / 0.979 \\
+\bottomrule
+\end{tabular}

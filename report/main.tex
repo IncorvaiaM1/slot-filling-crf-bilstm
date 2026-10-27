@@ -1,0 +1,342 @@
+% A1a report: Slot filling on ATIS, CRF vs BiLSTM
+% Numbers and tables come from report/make_tables.py (numbers.tex, tables/*.tex).
+% Rerun that script after any retraining; never type a number by hand.
+% Search for \todo to find everything that still needs your writing.
+\documentclass[10pt,twocolumn]{article}
+\usepackage[letterpaper,margin=0.7in,columnsep=0.25in]{geometry}
+\usepackage[compact]{titlesec}
+\titlespacing*{\section}{0pt}{1.0ex plus .3ex}{0.6ex}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage[hidelinks]{hyperref}
+\captionsetup{font=small,labelfont=bf,skip=4pt}
+\setlist{nosep,leftmargin=1.2em}
+\setlength{\parskip}{3pt}
+\setlength{\parindent}{0pt}
+% Let two table* floats share the top of a page (Tables 1 and 5).
+\renewcommand{\dbltopfraction}{0.9}
+\setcounter{dbltopnumber}{2}
+
+% Placeholder box for your writing. Set \showtodosfalse to hide them all.
+\newif\ifshowtodos \showtodosfalse % set to \showtodostrue to show TODO boxes
+\newcommand{\todo}[1]{\ifshowtodos{\color{red!70!black}\textbf{[TODO:} #1\textbf{]}}\fi}
+
+% Slot names with underscores, e.g. \slot{arrive_time.time}
+\newcommand{\slot}[1]{\texttt{\detokenize{#1}}}
+
+\input{numbers}
+
+\title{\vspace{-3em}A1a: Slot Filling on ATIS with a CRF and a BiLSTM}
+\author{Michael Incorvaia} % check name
+\date{September 2026}
+
+\begin{document}
+\maketitle
+\vspace{-1.5em}
+
+% =====================================================================
+\section{Setup}
+% Facts about what was built. Edit into your own voice.
+ATIS slot filling (4,478 / 500 / 893, 120 slots), strict span F1, every choice made on dev.
+The CRF (\texttt{sklearn-crfsuite}, $c_1{=}c_2{=}0.1$) uses word identity, affixes, shape,
+a $\pm1$ template with bigrams, lower-cased words at $\pm2$, and gazetteers plus a time regex
+(test \crfTestFull).
+The BiLSTM is a 2-layer network with random 100-d embeddings and a handwritten CRF layer,
+trained at constant lr $10^{-3}$ (test \lstmTestFull); a softmax head is the ablation.
+Part~C uses the fixed subsets of \nSentFive, \nSentTen, \nSentTwentyFive, and \nSentFull\ sentences.
+
+\todo{Optional 1--2 sentences: anything else about your design choices.}
+
+% =====================================================================
+\section{Part A: CRF feature engineering}
+\begin{table*}[t]
+\centering\small
+\caption{CRF feature log (last column: same features trained on the 5\% subset). Top block adds feature groups
+cumulatively; bottom block removes one group from the full set.}
+\label{tab:ablation}
+\input{tables/crf_ablation}
+\end{table*}
+
+\todo{Interpret the feature log. Which groups matter and why, in terms of what
+information each one gives the model? Facts to work from: identity only
+\crfDevIdentity; adding $\pm1$ context gives \crfDevCtxOne; removing all context
+drops the full model from \crfDevFull\ to \crfDevNoCtx; removing gazetteers gives
+\crfDevNoGaz. Note every gazetteer entry also appears in the training data.}
+
+Word identity alone (the surface form and its lower-cased form) is a dev F1 of
+\crfDevIdentity\ (0.776 test). On ATIS many strings are nearly unambiguous, so a
+memorized word-to-slot map already covers the easy spans. Prefixes and suffixes,
+then casing, digit, shape, and length, move dev F1 only to 0.783 and then 0.782.
+Those groups describe the form of the current token. On the 5\% subset they help
+a little: identity alone is \crfDevFiveIdentity\ and affixes raise it to 0.678.
+They do not choose a role. Role errors (right boundaries, right slot, wrong role,
+as in \slot{toloc.city_name} versus \slot{fromloc.city_name}) are
+\crfRoleIdentity\ with identity alone and 337 once orthography is added. The
+affix row was not measured. Form features leave the from/to and depart/arrive
+decision where they found it.
+
+The score arrives with context. The $\pm1$ template and bigrams raise dev F1
+from 0.782 to \crfDevCtxOne\ and cut role errors from 337 to \crfRoleCtxOne,
+because the preposition in ``from Boston'' versus ``to Boston'' is what chooses
+the role. The next row adds the lower-cased word at $\pm2$. Case-folding of the
+current token is already in the identity group. Dev F1 moves from \crfDevCtxOne\
+to \crfDevNoGaz, which is enough to see a verb two tokens from a time
+(``leaving after noon''). Gazetteers and the time regex then reach \crfDevFull,
+and role errors reach \crfRoleFull. Every list entry already occurs in the full
+training set, so those features barely move full-data F1 (bottom block of
+Table~\ref{tab:ablation}). On \nSentFive\ sentences the missing list items are 13 of 15 airport codes,
+11 of 23 airline words, and 10 of 19 day words. Three of the 34 cities are
+missing. Removing the lists costs \crfDevFiveFull\ down to \crfDevFiveNoGaz.
+Removing context returns the model to \crfDevNoCtx.
+
+% =====================================================================
+\section{Part C: Data efficiency}
+% Queued here, while page 1 is still being built, so this table* can sit
+% with Table 1 at the top of page 2, ahead of the Part D diagnoses.
+\begin{table*}[t]
+\centering\small
+\caption{Ten test failures. Bold = disputed tokens; $^\dagger$ = token never seen in
+training. ``Wrong'' says which model errs. Index in parentheses is the test line.}
+\label{tab:examples}
+{\footnotesize\input{tables/error_examples}}
+\end{table*}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/data_efficiency.pdf}
+\caption{Test span F1 vs.\ training-set size (log scale). BiLSTM curves are the
+mean of 3 seeds at 5--25\% (band = min--max, dots = individual seeds; $\pm$ in
+Table~\ref{tab:curve} is half that range) and 1 seed at 100\%. CRF training is
+deterministic. The plotted BiLSTM uses a constant learning rate chosen on dev,
+replacing a ReduceLROnPlateau schedule that undertrained the small subsets
+(test F1 \oldLstmTestFive\ at 5\%, \oldLstmTestFull\ at 100\%).}
+\label{fig:curve}
+\end{figure}
+
+\begin{table}[t]
+\centering\small
+\caption{Span F1 behind Fig.~\ref{fig:curve}. $\pm$ is half the min--max range over
+3 seeds. Best test score per row in bold.}
+\label{tab:curve}
+\resizebox{\linewidth}{!}{\input{tables/data_efficiency}}
+\end{table}
+
+\todo{Crossover discussion (graded: ``crossover discussed''). Where do the curves
+cross, and why is each model ahead on its side of the crossover? Facts: on test
+the CRF leads at 5\% (\crfTestFive\ vs \lstmTestFive) and 10\% (\crfTestTen\ vs
+\lstmTestTen); the BiLSTM-CRF leads at 25\% (\lstmTestTwentyFive\ vs
+\crfTestTwentyFive) and 100\% (\lstmTestFull\ vs \crfTestFull). On dev the
+crossover is earlier (10\%: \crfDevTenFrac\ vs \lstmDevTen).}
+
+\todo{What the CRF output layer buys the BiLSTM: compare BiLSTM-CRF and
+BiLSTM+softmax across sizes (5\%: \lstmTestFive\ vs \smTestFive; 100\%:
+\lstmTestFull\ vs \smTestFull).}
+
+\todo{Honesty notes, 1--2 sentences: single CRF run per point (deterministic);
+3 seeds for small BiLSTM runs. An earlier BiLSTM recipe with ReduceLROnPlateau
+under-trained the small-data runs (old test F1 at 5\%: \oldLstmTestFive; 100\%:
+\oldLstmTestFull); switching to a constant lr was chosen on dev and moved the
+crossover.}
+
+On test the curves cross between 10\% and 25\% of the training data.
+The CRF leads at \nSentFive\ sentences (\crfTestFive\ vs.\ \lstmTestFive) and at
+\nSentTen\ (\crfTestTen\ vs.\ \lstmTestTen); the BiLSTM-CRF leads at
+\nSentTwentyFive\ (\lstmTestTwentyFive\ vs.\ \crfTestTwentyFive) and at
+\nSentFull\ (\lstmTestFull\ vs.\ \crfTestFull).
+Dev flips earlier, at \nSentTen\ (\lstmDevTen\ vs.\ \crfDevTenFrac).
+Below the crossover, gazetteers, shape, and the $\pm1$ templates already supply
+regularities the randomly initialized encoder has not learned: the
+\lstmTestFive\ $\pm 0.011$ band stays under \crfTestFive.
+Above it, the encoder covers dependencies outside that window, such as a verb
+several tokens from its time.
+On dev, switching from ReduceLROnPlateau to the constant learning rate moves
+the crossover from between 10\% and 25\% to between 5\% and 10\%.
+On test both schedules still cross between 10\% and 25\%. The constant rate
+shrinks the 10\% test gap from 0.028 (\crfTestTen\ vs.\ \oldLstmTestTen) to
+0.004 (\crfTestTen\ vs.\ \lstmTestTen). Full-data test F1 barely changes
+(\oldLstmTestFull\ to \lstmTestFull).
+
+The CRF output layer is worth the most while the encoder is weak:
+\lstmTestFive\ vs.\ \smTestFive\ at 5\%, where the transition matrix blocks
+illegal BIO paths. The two heads tie at 25\% (\lstmTestTwentyFive\ and
+\smTestTwentyFive) and the full-data gap is \lstmTestFull\ vs.\ \smTestFull.
+The win over the feature CRF is the encoder. The structured output is a
+small-data constraint.
+
+% =====================================================================
+\section{Part D: Error analysis}
+\begin{table}[t]
+\centering\small
+\caption{Test-set error profile of the two 100\% models.}
+\label{tab:errsum}
+\resizebox{\linewidth}{!}{\input{tables/error_summary}}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\caption{Slot types ($n\ge5$) with the largest F1 gap.}
+\label{tab:perslot}
+\resizebox{\linewidth}{!}{\input{tables/per_slot}}
+\end{table}
+
+% Factual notes you can use (not conclusions):
+% D1 (176): "arrives" is token 9, "950" is token 14 (5 positions away); CRF sees full features at +-1, words only at +-2.
+% D2 (368): "l1011" is OOV; CRF shape = xdddd; BiLSTM sees <UNK> between "an" and "aircraft".
+% D3/D4 (359, 512): "phl", "tpa" OOV and not in the airport-code gazetteer; whole utterance is "what is X".
+% D5 (204): gold tags "india" as O (speaker restart before "indianapolis"); "india" is OOV.
+% D6 (773): "757" is in train vocab, "hold" is OOV; CRF has isdigit/shape features on "757".
+% D7/D8 (164, 165): "320", "dh8" OOV, both right after "aircraft".
+% D9 (51): gold treats "665 673" as one flight_number span.
+% D10 (243): "be1" OOV after airline name "delta".
+
+\todo{One diagnosis per example, contrasted across models. The rubric wants the
+mechanism, e.g.\ ``CRF misses unseen city names because word-identity features
+can't fire''. Suggested grouping below; merge or reorder freely.}
+
+\todo{Tie back to the aggregates: Table~\ref{tab:errsum} (most errors are
+wrong-type, not boundary; recall on spans containing an OOV token is
+\crfOovRecall\ for CRF vs \lstmOovRecall\ for BiLSTM, over \oovSpans\ spans) and
+Table~\ref{tab:perslot} (which slot families each model owns).}
+
+Most remaining errors are the wrong type: 142 for the CRF and 102 for the
+BiLSTM-CRF, against 12 and 11 boundary errors (Table~\ref{tab:errsum}).
+The models find the span and then assign the wrong role, the same gap $\pm1$
+context closed in the feature log (\crfRoleIdentity\ role errors down to
+\crfRoleCtxOne). The BiLSTM-CRF misses fewer spans (21 vs.\ 33).
+The CRF alone is wrong on \nCrfWrongOnly\ sentences, the BiLSTM-CRF alone on
+\nLstmWrongOnly, and both on \nBothWrong.
+Recall on spans with an unseen token is \crfOovRecall\ vs.\ \lstmOovRecall\
+(\oovSpans\ spans), against 0.938 and 0.956 in vocabulary.
+The CRF leads on \slot{aircraft_code} (0.935 vs.\ 0.653, $n{=}33$) from word
+identity, digit/shape, and the word ``aircraft'' beside the code. There is no
+aircraft-code gazetteer. It also leads on \slot{fromloc.airport_code}
+(0.909 vs.\ 0.769, $n{=}5$), where the airport-code list can fire.
+The BiLSTM-CRF leads on bare \slot{airport_code} (0.444 vs.\ 0.200, $n{=}9$)
+and on compositional time and date roles, including
+\slot{arrive_time.period_of_day} (0.857 vs.\ 0.000, $n{=}6$).
+The period list contains ``morning'' and ``evening,'' and the CRF's F1 on that
+slot is still zero: the list marks a period, and the arrive/depart role is left
+to context.
+
+\textbf{Errors only the CRF makes (D1--D4).}
+
+\textbf{D1.} Gold and the BiLSTM-CRF mark ``950 am'' as \slot{arrive_time.time};
+the CRF emits \slot{depart_time.time}.
+The time regex fires on the unseen digits and ``am'' is in the period list, but
+``arrives'' (token 9) is five positions from ``950'' (token 14), outside the
+$\pm1$ template and the $\pm2$ words.
+The BiLSTM's state at the time still contains the verb.
+
+\textbf{D2.} Gold and the BiLSTM-CRF mark unseen ``l1011'' as \slot{aircraft_code};
+the CRF emits nothing.
+Shape \texttt{xdddd} sets neither \texttt{isdigit} nor the time regex, and
+there is no aircraft-code list.
+The BiLSTM sees \texttt{<UNK>} between ``an'' and ``aircraft'' and labels it
+from that frame.
+
+\textbf{D3 and D4.} ``phl'' and ``tpa'' are unseen and absent from the
+airport-code list, which keeps only codes from training.
+Gold is \slot{airport_code}. The BiLSTM-CRF gets both, since both map to
+\texttt{<UNK>} in ``what is \texttt{<UNK>}.''
+The CRF has no identity feature and no list hit, so it misses both.
+
+\textbf{Errors only the BiLSTM makes (D5--D8).}
+
+\textbf{D5.} Gold leaves unseen ``india'' as O, a restart before
+``indianapolis.'' The city list does not contain ``india,'' so the CRF also
+emits O.
+The BiLSTM sees \texttt{<UNK>} after ``from'' and emits \slot{fromloc.city_name}.
+
+\textbf{D6.} ``757'' is in the training vocabulary; ``hold'' is unseen.
+Gold and the CRF mark a one-token \slot{aircraft_code}, from word identity and
+\texttt{isdigit}.
+The BiLSTM pulls \texttt{<UNK>} into the span and emits \slot{transport_type}
+on ``757 hold.''
+
+\textbf{D7 and D8.} Unseen ``320'' and ``dh8'' sit immediately after ``aircraft.''
+Gold and the CRF mark \slot{aircraft_code} from that previous-word feature; the
+BiLSTM sees \texttt{<UNK>} and emits O.
+This is the reverse of D2, and it is why \slot{aircraft_code} is the CRF's
+largest gap in Table~\ref{tab:perslot}.
+
+\textbf{Errors both make (D9--D10).}
+
+\textbf{D9.} Gold is one \slot{flight_number} span on unseen ``665 673.''
+The CRF emits two spans, one per digit string, and the BiLSTM keeps only ``665.''
+\texttt{isdigit} and the time regex fire on each token separately, so neither
+model joins the unseen pair.
+
+\textbf{D10.} Gold is \slot{airline_name} on ``delta'' and \slot{aircraft_code}
+on unseen ``be1.''
+The CRF merges ``delta be1'' into one airline span.
+The BiLSTM splits them and labels ``be1'' as \slot{flight_number}, the usual
+short code after an airline name.
+
+% =====================================================================
+\section{Would I have switched to neural in 2014?}
+\todo{One paragraph, knowing only what this assignment showed. At what data size?
+Consider: the crossover point, the cost of feature engineering vs.\ the cost of
+tuning (the lr-schedule episode), seed variance, and what the error analysis says
+each model is good at.}
+
+With only these results, I would ship the BiLSTM-CRF on the full training set
+and keep the linear CRF below the test crossover, between \nSentTen\ and
+\nSentTwentyFive\ sentences.
+At \nSentFull\ the neural model leads \lstmTestFull\ to \crfTestFull, 1.6
+points. That is the scale of the last two feature steps on dev, from
+\crfDevCtxOne\ to \crfDevFull\ (2.6 points). The $\pm1$ context step, 0.782 to
+\crfDevCtxOne, was 14.6 points.
+The gain is uneven: long-range roles and compositional dates and times, plus
+OOV recall \lstmOovRecall\ vs.\ \crfOovRecall, while \slot{aircraft_code} stays
+with the CRF (0.935 vs.\ 0.653) via identity, shape, and the word ``aircraft.''
+The constant learning rate had to be chosen on dev, where it does move the
+crossover. On test it does not, and the old schedule was already ahead at full
+data (\oldLstmTestFull). The 5\% seed band is about a point. I would have
+shipped the BiLSTM-CRF at \nSentFull\ after locking that learning rate, and
+left the feature CRF in place for equipment codes and for the small side of the
+test crossover.
+Mesnil et al.\ (2015) made that comparison for ATIS: recurrent taggers
+passing a CRF \cite{mesnil2015}.
+
+\begingroup
+\footnotesize
+\setlength{\itemsep}{0pt}
+\begin{thebibliography}{1}
+\bibitem{mesnil2015}
+Mesnil, G., Dauphin, Y., Yao, K., Bengio, Y., Deng, L., Hakkani-Tur, D.,
+He, X., Heck, L., Tur, G., Yu, D., and Zweig, G. 2015.
+Using recurrent neural networks for slot filling in spoken language understanding.
+\textit{IEEE/ACM Transactions on Audio, Speech, and Language Processing},
+23(3):530--539.
+\end{thebibliography}
+\endgroup
+
+\clearpage
+\appendix
+% The disclosure starts on its own page so it is easy to see it is outside the 3-page body.
+\section*{AI-use disclosure}
+% Draft list of what an AI assistant did, from the session log. Verify, edit,
+% and add anything else you used AI for.
+\todo{Name the tools and versions you used.}
+\begin{itemize}
+  \item \todo{What you wrote yourself and what AI wrote (e.g.\ boilerplate in
+  \texttt{train.py}, \texttt{models/}, helper scripts).}
+  \item Code review: an AI assistant (Claude) compared the repo with the course
+  skeleton, simulated the autograder's inference check on the submission zip, and
+  checked the Viterbi decoder and CRF loss against brute-force enumeration.
+  \item Experiments run by the assistant at my request: the CRF feature ablation
+  (\texttt{crf\_ablation.py}), removing two test-only airport codes from the
+  gazetteer and retraining the CRF, extra BiLSTM seeds, the softmax-only BiLSTM
+  (\texttt{--no-crf}), and the constant-lr BiLSTM recipe that replaced the
+  submitted checkpoint after it scored higher on dev.
+\end{itemize}
+
+\end{document}
